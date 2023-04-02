@@ -29,14 +29,16 @@ extraargs=initcall_blacklist=ili9486_spi_driver_init
 sudo reboot
 ```
 
-# The future of the FBTFT driver
+# Useful information
 
-Please [read here](https://github.com/notro/fbtft/wiki/DRM-drivers).
+## The future of the FBTFT driver
 
-The Waveshare 3.5" RPi LCD driver does not allow to configure the display initialization sequence.
+The fbdev graphic subsystem is now obsolete. Please [read here](https://github.com/notro/fbtft/wiki/DRM-drivers).
 
-There is a generic [panel-mipi-dbi](https://github.com/notro/panel-mipi-dbi) driver which supports custom initialization sequences, but doesn't support 16-bit commands and parameters used by the display. AFAIK the author of the driver is not willing to add the support for it because the display doesn't conform to the MIPI DBI specification.
+The [DRM driver for the ILI9486 controller](https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/tiny/ili9486.c) does not allow to configure the display initialization sequence and only works with the Waveshare 3.5" RPi LCD.
 
-### The interface circuit
+There is [a generic `panel-mipi-dbi` driver](https://github.com/notro/panel-mipi-dbi/wiki) ([source code](https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/tiny/panel-mipi-dbi.c)), which supports custom initialization sequences but doesn't support 16-bit commands and parameters used by the display. AFAIK the author of the driver is not willing to add the support for it because the display doesn't conform to the MIPI DBI specification.
+
+## The interface circuit
 
 See https://github.com/notro/fbtft/wiki/SPI-interface-circuit.
