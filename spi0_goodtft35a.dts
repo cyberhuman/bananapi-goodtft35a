@@ -17,11 +17,11 @@
 				function = "gpio_out";
 				output-low;
 			};
-			ads7846_pins: ads7846_pins {
+			ads7846_irq_pin: ads7846_irq_pin {
 				pins = "PA1";
 				function = "irq";
 			};
-			spi0_cs1: spi0_cs1 {
+			spi0_cs1_pin: spi0_cs1_pin {
 				pins = "PC7";
 				function = "gpio_out";
 				output-high;
@@ -37,7 +37,7 @@
 			status = "okay";
 
 			pinctrl-names = "default", "default";
-			pinctrl-1 = <&spi0_cs1>;
+			pinctrl-1 = <&spi0_cs1_pin>;
 			cs-gpios = <0>, <&pio 2 7 0>; // CS0, PC7 GPIO_ACTIVE_HIGH
 
 			goodtft35a@0 {
@@ -55,7 +55,7 @@
 				fps = <30>;
 				buswidth = <8>;
 				regwidth = <16>;
-				reset-gpios = <&pio 0 2 1>; // PA2 GPIO_ACTIVE_HIGH
+				reset-gpios = <&pio 0 2 1>; // PA2 GPIO_ACTIVE_LOW
 				dc-gpios = <&pio 2 4 0>; // PC4 GPIO_ACTIVE_HIGH
 				debug = <0>;
 				init = <
