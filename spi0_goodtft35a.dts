@@ -1,0 +1,96 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "allwinner,sun8i-h3";
+
+	fragment@0 {
+		target = <&pio>;
+		__overlay__ {
+			tft35a_reset_pin: tft35a_reset_pin {
+				pins = "PA2";
+				function = "gpio_out";
+				output-high;
+			};
+			tft35a_dc_pin: tft35a_dc_pin {
+				pins = "PC4";
+				function = "gpio_out";
+				output-low;
+			};
+			ads7846_pins: ads7846_pins {
+				pins = "PA1";
+				function = "irq";
+			};
+			spi0_cs1: spi0_cs1 {
+				pins = "PC7";
+				function = "gpio_out";
+				output-high;
+			};
+		};
+	};
+
+	fragment@1 {
+		target = <&spi0>;
+		__overlay__ {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			status = "okay";
+
+			pinctrl-names = "default", "default";
+			pinctrl-1 = <&spi0_cs1>;
+			cs-gpios = <0>, <&pio 2 7 0>; // CS0, PC7 GPIO_ACTIVE_HIGH
+
+			goodtft35a@0 {
+				compatible = "ilitek,ili9486";
+
+				reg = <0>; // Chip Select 0
+				pinctrl-names = "default";
+				pinctrl-0 = <&tft35a_reset_pin>, <&tft35a_dc_pin>;
+				status = "okay";
+
+				spi-max-frequency = <16000000>;
+				txbuflen = <0x8000>;
+				rotate = <90>;
+				bgr = <0>;
+				fps = <30>;
+				buswidth = <8>;
+				regwidth = <16>;
+				reset-gpios = <&pio 0 2 1>; // PA2 GPIO_ACTIVE_HIGH
+				dc-gpios = <&pio 2 4 0>; // PC4 GPIO_ACTIVE_HIGH
+				debug = <0>;
+				init = <
+					0x10000f1 0x36 0x04 0x00 0x3c 0x0f 0x8f
+					0x10000f2 0x18 0xa3 0x12 0x02 0xb2 0x12 0xff 0x10 0x00
+					0x10000f8 0x21 0x04
+					0x10000f9 0x00 0x08
+					0x1000036 0x08
+					0x10000b4 0x00
+					0x10000c1 0x41
+					0x10000c5 0x00 0x91 0x80 0x00
+					0x10000e0 0x0f 0x1f 0x1c 0x0c 0x0f 0x08 0x48 0x98 0x37 0x0a 0x13 0x04 0x11 0x0d 0x00
+					0x10000e1 0x0f 0x32 0x2e 0x0b 0x0d 0x05 0x47 0x75 0x37 0x06 0x10 0x03 0x24 0x20 0x00
+					0x100003a 0x55
+					0x1000011
+					0x1000036 0x28
+					0x20000ff
+					0x1000029
+				>;
+			};
+
+			ads7846@1 {
+				compatible = "ti,ads7846";
+				reg = <1>; // Chip Select 1
+				status = "okay";
+
+				spi-max-frequency = <2000000>;
+				interrupt-parent = <&pio>;
+				interrupts = <0 1 2>; // PA1 IRQ_TYPE_EDGE_FALLING
+				pendown-gpio = <&pio 0 1 0>; // PA1
+
+				ti,x-plate-ohms = /bits/ 16 <60>;
+				ti,pressure-max = /bits/ 16 <255>;
+			};
+
+		};
+	};
+};
