@@ -24,6 +24,18 @@ Edit the `/boot/armbianEnv.txt` file and add:
 extraargs=initcall_blacklist=ili9486_spi_driver_init
 ```
 
+## Configure Xorg
+
+Create the `/usr/share/X11/xorg.conf.d/99-device.conf` file with the following contents:
+```
+Section "Device"
+        Identifier      "FBDEV"
+        Driver          "fbdev"
+        Option          "fbdev" "/dev/fb0"
+        Option          "SwapbuffersWait" "true"
+EndSection
+```
+
 ## Reboot
 ```
 sudo reboot
